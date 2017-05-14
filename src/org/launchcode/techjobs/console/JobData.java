@@ -7,9 +7,10 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
+import java.util.*;
+
+import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by LaunchCode
@@ -34,15 +35,18 @@ public class JobData {
         loadData();
 
         ArrayList<String> values = new ArrayList<>();
+        int count = 0;
 
         for (HashMap<String, String> row : allJobs) {
             String aValue = row.get(field);
 
             if (!values.contains(aValue)) {
                 values.add(aValue);
+                count = count + 1; //counting number of time through loop for debugging
             }
         }
 
+        System.out.println("Number of values found: " + count + "\n");
         return values;
     }
 
@@ -50,7 +54,7 @@ public class JobData {
 
         // load data, if not already loaded
         loadData();
-
+        System.out.println("\nNumber of Jobs: " + allJobs.size() + "\n");
         return allJobs;
     }
 
@@ -62,7 +66,7 @@ public class JobData {
      * with "Enterprise Holdings, Inc".
      *
      * @param column   Column that should be searched.
-     * @param value Value of teh field to search for
+     * @param value Value of the field to search for
      * @return List of all jobs matching the criteria
      */
     public static ArrayList<HashMap<String, String>> findByColumnAndValue(String column, String value) {
@@ -71,16 +75,50 @@ public class JobData {
         loadData();
 
         ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+        int count = 0;
 
         for (HashMap<String, String> row : allJobs) {
 
             String aValue = row.get(column);
 
-            if (aValue.contains(value)) {
+            if (aValue.toLowerCase().contains(value.toLowerCase())) {
                 jobs.add(row);
+                count = count + 1; //counting number of time through loop for debugging
             }
         }
 
+        System.out.println("Number of matches: " + count + "\n");
+        return jobs;
+    }
+
+    /**
+     * Returns results of search the jobs data by value, using inclusion of the search term.
+     *
+     * For example, searching for "Enterprise" will include results from any column containing "Enterprise",
+     * such as "Enterprise Holdings, Inc".
+     *
+     * @param value Value of the field to search for
+     * @return List of all jobs matching the criteria
+     */
+    public static ArrayList<HashMap<String, String>> findByValue(String value) {
+
+        // load data, if not already loaded
+        loadData();
+
+        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+        int count = 0;
+
+        for (HashMap<String, String> row : allJobs) {
+            for (Map.Entry<String, String> job : row.entrySet()) {
+                String aValue = job.getValue();
+                if (aValue.toLowerCase().contains(value.toLowerCase())) {
+                    jobs.add(row);
+                    count = count + 1; //counting number of time through loop for debugging
+                    break;
+                }
+            }
+        }
+        System.out.println("Number of matches: " + count + "\n");
         return jobs;
     }
 
@@ -89,11 +127,11 @@ public class JobData {
      */
     private static void loadData() {
 
-        // Only load data once
+        /*// Only load data once
         if (isDataLoaded) {
             return;
         }
-
+        */
         try {
 
             // Open the CSV file and set up pull out column header info and records
