@@ -42,6 +42,8 @@ public class TechJobs {
                 } else {
 
                     ArrayList<String> results = JobData.findAll(columnChoice);
+                    List<String> sublist = results.subList(0, results.size());
+                    Collections.sort(sublist);
 
                     System.out.println("\n*** All " + columnChoices.get(columnChoice) + " Values ***");
 
@@ -112,7 +114,7 @@ public class TechJobs {
     private static void printJobs(ArrayList<HashMap<String, String>> someJobs) {
 
         if (someJobs.size() < 1){
-            System.out.println("No matches found.");
+            System.out.println("No matches found.\n");
             return;
 
         }else {
@@ -125,7 +127,6 @@ public class TechJobs {
                 while (it.hasNext()) {
                     Entry pairs = (Entry) it.next();
                     System.out.println(pairs.getKey() + ": " + pairs.getValue());
-                    it.remove(); // avoids a ConcurrentModificationException
                 }
                 System.out.println("*****\n");
             }
